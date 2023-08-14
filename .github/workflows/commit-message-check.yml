@@ -1,0 +1,34 @@
+name: Commit Message Check
+
+on:
+  push:
+    branches:
+      - main  # Ajusta esto según la rama que deseas controlar
+
+jobs:
+  commit-message-check:
+    name: Check commit messages
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check commit messages
+      uses: actions/checkout@v2
+      
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - name: Install dependencies
+      run: npm install @commitlint/{config-conventional,cli} -D
+      
+    - name: Validate commit messages
+      run: npx commitlint --from=HEAD~1
+
+    - name: Check commit content
+      run: |
+        COMMIT_MSG=$(git log --format=%B -n 1 $GITHUB_SHA)
+        if [[ ! $COMMIT_MSG =~ (test|feat|refactor|bug) ]]; then
+          echo "Error: Commit message must contain one of: test, feat, refactor, bug"
+          exit 1
+        fi
