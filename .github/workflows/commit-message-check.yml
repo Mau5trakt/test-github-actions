@@ -3,7 +3,7 @@ name: Commit Message Check
 on:
   push:
     branches:
-      - main  # Ajusta esto según la rama que deseas controlar
+      - main 
 
 jobs:
   commit-message-check:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Check commit content
       run: |
-        COMMIT_MSG=$(git log --format=%B -n 1 $GITHUB_SHA)
+        COMMIT_MSG=$(git log -1 --pretty=format:%B)
         if [[ ! $COMMIT_MSG =~ (test|feat|refactor|bug) ]]; then
           echo "Error: Commit message must contain one of: test, feat, refactor, bug"
           exit 1
